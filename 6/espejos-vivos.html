@@ -55,6 +55,7 @@
   .btn{flex:1;border:1px solid var(--line);background:linear-gradient(180deg,#ffffff,#f0f0f0);border-radius:9px;padding:10px;font-size:13.5px;font-weight:600;cursor:pointer;color:#333;box-shadow:0 3px 0 rgba(0,0,0,0.08),0 5px 9px rgba(0,0,0,0.10),inset 0 1px 0 rgba(255,255,255,0.9);transition:transform .08s,box-shadow .08s}
   .btn:hover{border-color:var(--teal);transform:translateY(-1px);box-shadow:0 4px 0 rgba(0,0,0,0.08),0 7px 11px rgba(0,0,0,0.12),inset 0 1px 0 rgba(255,255,255,0.9)}
   .btn.warn:hover{border-color:#C0392B;color:#C0392B}
+  .namewrap input{width:100%;border:2px solid var(--line);border-radius:9px;padding:9px 12px;font-size:14px;margin-top:6px}
   .btn.go{background:linear-gradient(180deg,#E68B3A,var(--orange));color:#fff;border:none;box-shadow:0 3px 0 rgba(150,70,10,0.35),0 5px 9px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.3)}
 
   .stage{background:rgba(255,255,255,0.825);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 6px 22px rgba(20,40,80,0.16)}
@@ -121,6 +122,11 @@
       <div class="blk">
         <div class="lab">Grosor del trazo</div>
         <input class="range" id="size" type="range" min="2" max="22" value="7">
+      </div>
+
+      <div class="blk namewrap">
+        <div class="lab" style="margin-bottom:0">Nombre de tu obra</div>
+        <input id="oname" type="text" maxlength="30" placeholder="Ej: Mi mandala">
       </div>
 
       <div class="row">
@@ -250,10 +256,14 @@ document.getElementById("size").oninput=e=>size=+e.target.value;
 document.getElementById("clear").onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);drew=0;document.getElementById("badge").classList.remove("on");};
 document.getElementById("done").onclick=()=>{showBadge();document.getElementById("badge").scrollIntoView({behavior:"smooth"});};
 document.getElementById("save").onclick=()=>{
-  // fondo blanco para el PNG
-  const out=document.createElement("canvas");out.width=cv.width;out.height=cv.height;
+  const name=(document.getElementById("oname").value||"").trim()||"Mi obra simétrica";
+  const out=document.createElement("canvas");out.width=cv.width;out.height=cv.height+50;
   const o=out.getContext("2d");o.fillStyle="#fff";o.fillRect(0,0,out.width,out.height);o.drawImage(cv,0,0);
-  const a=document.createElement("a");a.download="mi_simetria_LIVIMA.png";a.href=out.toDataURL("image/png");a.click();
+  o.fillStyle="#1B3A6B";o.font="italic 24px Georgia, serif";o.textAlign="center";
+  o.fillText(name,out.width/2,cv.height+34);
+  const a=document.createElement("a");
+  a.download=name.replace(/[^a-z0-9\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1 ]/gi,"_")+".png";
+  a.href=out.toDataURL("image/png");a.click();
 };
 
 window.addEventListener("resize",()=>{drawAxes();});
